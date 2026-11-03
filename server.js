@@ -9,6 +9,12 @@ const users = [
   { id: 3, name: "Charlie" }
 ];
 
+const courses = [
+  { id: 1, name: "JavaScript Fundamentals" },
+  { id: 2, name: "Express.js Basics" },
+  { id: 3, name: "REST API Design" }
+];
+
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -37,6 +43,30 @@ app.post("/users", (req, res) => {
     message: "User received successfully.",
     user: req.body
   });
+});
+
+app.get("/courses", (req, res) => {
+  res.json(courses);
+});
+
+app.get("/courses/:id", (req, res) => {
+  const course = courses.find((item) => item.id === Number(req.params.id));
+
+  if (!course) {
+    return res.status(404).json({ message: "Course not found." });
+  }
+
+  res.json(course);
+});
+
+app.post("/courses", (req, res) => {
+  const newCourse = {
+    ...req.body,
+    id: courses.length === 0 ? 1 : Math.max(...courses.map((course) => course.id)) + 1
+  };
+
+  courses.push(newCourse);
+  res.status(201).json(newCourse);
 });
 
 app.get("/users/:id", (req, res) => {
